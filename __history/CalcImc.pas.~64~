@@ -1,0 +1,216 @@
+unit CalcImc;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Controls,
+  Vcl.NumberBox;
+
+type
+  TForm1 = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    btLimpar: TSpeedButton;
+    rgSelSexo: TRadioGroup;
+    Label1: TLabel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    Panel8: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    edtAltura: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    edtPeso: TEdit;
+    Label6: TLabel;
+    Label7: TLabel;
+    Panel5: TPanel;
+    btCalcular: TSpeedButton;
+    edtIdade: TNumberBox;
+    procedure btLimparClick(Sender: TObject);
+    procedure btCalcularClick(Sender: TObject);
+    procedure edtAlturaChange(Sender: TObject);
+    procedure edtPesoChange(Sender: TObject);
+    procedure edtPesoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtIdadeKeyPress(Sender: TObject; var Key: Char);
+    procedure edtIdadeChangeValue(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure edtAlturaKeyPress(Sender: TObject; var Key: Char);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    var
+    valor : Double;
+    valor2 :Double;
+    resultado : Double;
+    tipoImc : double;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+    edtIdade.Text := '';
+end;
+
+procedure TForm1.edtAlturaChange(Sender: TObject);
+var
+valor2 : Double;
+begin
+      edtAltura.MaxLength := 4;
+
+      if  TryStrToFloat(edtAltura.text, valor2) then
+     begin
+       if Valor > 2.34 then
+       begin
+         ShowMessage(' Porra, tu é um Titã? ');
+         edtAltura.text := '2,34';
+       end;
+     end
+     else begin
+         edtAltura.text := '';
+     end;
+
+      if pos('.', edtAltura.text) > 0 then
+        edtAltura.text := StringReplace(edtAltura.text, '.', '',[rfReplaceAll]);
+        edtAltura.SelStart := Length( edtAltura.Text)+1;
+
+end;
+
+procedure TForm1.edtAlturaKeyPress(Sender: TObject; var Key: Char);
+begin
+if not (Key in ['0'..'9', #8 , ',']) then
+         Key := #0;
+
+         if (Key = ',') and (Pos(',', TEdit(Sender).Text) > 0) then
+  begin
+    Key := #0;
+  end;
+
+end;
+
+procedure TForm1.edtIdadeChangeValue(Sender: TObject);
+var
+ valor : Integer;
+begin
+    edtIdade.MaxLength := 3;
+    if  TryStrToInt(edtIdade.text, valor) then
+     begin
+       if Valor > 122 then
+       begin
+         ShowMessage('Calma aí paizão, você nem é tão velho assim!');
+         edtIdade.text := '100';
+       end;
+     end
+     else begin
+        edtIdade.text := '';
+     end;
+
+end;
+
+procedure TForm1.edtIdadeKeyPress(Sender: TObject; var Key: Char);
+begin
+     if not (Key in ['0'..'9', #8]) then
+         Key := #0;
+
+         if (Key = ',') and (Pos(',', TEdit(Sender).Text) > 0) then
+  begin
+    Key := #0;
+  end;
+end;
+
+procedure TForm1.edtPesoChange(Sender: TObject);
+var
+ valor : integer;
+begin
+     if pos('.', edtPeso.text) > 0 then
+        edtPeso.text := StringReplace(edtPeso.text, '.', '',[rfReplaceAll]);
+        edtPeso.SelStart := Length( edtPeso.Text)+1;
+end;
+
+
+procedure TForm1.edtPesoKeyPress(Sender: TObject; var Key: Char);
+begin
+    if not (Key in ['0'..'9', #8, ',']) then
+         Key := #0;
+
+      if (Key = ',') and (Pos(',', TEdit(Sender).Text) > 0) then
+            begin
+              Key := #0;
+            end;
+end;
+
+procedure TForm1.btCalcularClick(Sender: TObject);
+
+begin
+
+    valor :=strToFloat(edtAltura.text);
+    valor2 :=strToFloat(edtPeso.Text);
+    resultado := valor2 / (valor * valor);
+    if resultado <= 18.5 then
+        MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está abaixo do peso! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+
+    if (resultado >=18.6) and (resultado <=24.9)  then
+      MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está no seu peso ideal! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+
+    if (resultado >=25) and (resultado <=29.9)  then
+      MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está Sobrepeso! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+
+    if (resultado >=30) and (resultado >=34.9)  then
+      MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está com obesidade grau I! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+
+    if (resultado >=35) and (resultado >=39.9)  then
+      MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está com obesidade grau II! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+
+    if resultado >= 40 then
+       MessageDlg(' Você tem '+ edtIdade.text + ' anos, seu IMC é '
+       + FormatFloat('0.00', resultado) + ' e você está com obesidade grau III (Mórbida)! ',
+        TMsgDlgType.mtInformation, [mbOK], 0);
+
+end;
+
+
+procedure TForm1.btLimparClick(Sender: TObject);
+
+begin
+
+    if (edtIdade.text <>'') then
+    begin
+        edtIdade.Text:='';
+    end;
+     if (edtAltura.text <>'') then
+    begin
+        edtAltura.Text:='';
+    end;
+     if (edtPeso.text <>'') then
+    begin
+        edtPeso.Text:='';
+    end;
+
+end;
+End.
